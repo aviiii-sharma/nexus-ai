@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Link } from 'react-router-dom';
 import './home.css'
 
@@ -18,7 +18,7 @@ const Homepage = () => {
                         <div className='bg'>
                         </div>
                     </div>
-                    <img src="/bot.png" className="bot" />
+                    <img src="/rocket.png" className="bot" />
                 </div>
 
             </div>

@@ -5,7 +5,9 @@
 body {
   @apply bg-[#121212] text-[#E0E0E0]; /* Dark background and light text */
 }
-
+::-webkit-scrollbar {
+  display: none;
+}
 
 
 
