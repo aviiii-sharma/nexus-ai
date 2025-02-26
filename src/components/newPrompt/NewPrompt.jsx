@@ -1,7 +1,16 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import './prompt.css'
+import Upload from '../upload/Upload';
+import { IKImage } from "imagekitio-react";
 
 const NewPrompt = () => {
+
+    const [img, setImg] = useState({
+        isLoading: false,
+        error: "",
+        dbData: {}
+
+    })
 
     const endRef = useRef(null);
 
@@ -12,16 +21,21 @@ const NewPrompt = () => {
     return (
         <>
             {/* Add new Chat */}
-
+            {img.isLoading && <div className='loading'>Loading...</div>}
+            {img.dbData?.filePath && (
+                <IKImage
+                    urlEndpoint={import.meta.env.VITE_IMAGE_KIT_ENDPOINT}
+                    path={img.dbData?.filePath}
+                    width="150"
+                />
+            )}
             <div className='endChat' ref={endRef}>
                 <div className='container'>
                     <hr className='hr-text' data-content="End of the Chat" />
                 </div>
             </div>
             <form action="" className='newForm'>
-                <label htmlFor="file">
-                    <img src="/link.png" alt="" />
-                </label>
+                <Upload setImg={setImg} />
                 <input id='file' type="file" multiple={false} hidden />
                 <input type="text" placeholder='Type your message here...' />
                 <button>
