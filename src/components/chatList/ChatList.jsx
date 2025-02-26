@@ -1,4 +1,3 @@
-import React from 'react'
 import { Link } from 'react-router-dom'
 import './chat.css'
 
@@ -14,6 +13,8 @@ const ChatList = () => {
             <hr />
             <span className='title'>Recent Chats</span>
             <div className='list'>
+                <Link to="/"> My Chat title</Link>
+                <Link to="/"> My Chat title</Link>
                 <Link to="/"> My Chat title</Link>
                 <Link to="/"> My Chat title</Link>
                 <Link to="/"> My Chat title</Link>

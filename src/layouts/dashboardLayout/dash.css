@@ -12,5 +12,6 @@
     .content {
         flex: 5;
         background: #171718 !important;
+        padding: 0 0 18px 0;
     }
 }
