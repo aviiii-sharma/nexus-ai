@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
+import { dark } from '@clerk/themes'
 import { ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
 import './root.css'
 
@@ -12,7 +13,9 @@ if (!PUBLISHABLE_KEY) {
 
 const RootLayout = () => {
     return (
-        <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+        <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/" appearance={{
+            baseTheme: dark
+        }}>
 
             <div className="rootLayout">
                 <header>
