@@ -5,6 +5,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import UserChats from './models/userChats.js';
 import Chat from './models/chat.js';
+import { ClerkExpressRequireAuth, ClerkExpressWithAuth } from '@clerk/clerk-sdk-node';
 
 
 
@@ -17,7 +18,10 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use(cors());
+app.use(cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+}));
 
 const connect = async () => {
     try {
@@ -41,9 +45,9 @@ app.get('/api/upload', (req, res) => {
     res.send(result);
 })
 
-app.post('/api/chats', async (req, res) => {
-
-    const { userId, text } = req.body;
+app.post('/api/chats', ClerkExpressRequireAuth(), async (req, res) => {
+    const userId = req.auth.userId;
+    const { text } = req.body;
 
     try {
         // create a new chat
@@ -76,7 +80,7 @@ app.post('/api/chats', async (req, res) => {
             await newUserChat.save();
         } else {
             //if user exists already
-            await userChats.updateOne({
+            await UserChats.updateOne({
                 userId
             },
                 {
@@ -95,6 +99,30 @@ app.post('/api/chats', async (req, res) => {
         res.status(500).send('Server Error');
     }
 
+})
+
+app.get('/api/userchats', ClerkExpressWithAuth(), async (req, res) => {
+    const userId = req.auth.userId;
+
+    try {
+        const userChats = await UserChats.find({ userId });
+
+        if (!userChats) {
+            return res.status(404).send('No chats found');
+        }
+
+        // console.log(userChats);
+        res.status(200).send(userChats[0].chats);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+})
+
+app.use((err, req, res) => {
+    console.error(err.stack);
+    res.status(401).send('Something broke!');
 })
 
 
