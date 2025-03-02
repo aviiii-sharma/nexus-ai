@@ -20,7 +20,8 @@ const ChatList = () => {
             </span>
             <Link to="/dashboard" >Create a new Chat</Link>
             <Link to="/" >Explore AI Nexus</Link>
-            <Link to="/" >Contact</Link>
+            <a href="https://amleshwar-p.vercel.app/" target="_blank" rel="noopener noreferrer">Contact</a>
+
             <hr />
             <span className='title'>Recent Chats</span>
             <div className='list'>
