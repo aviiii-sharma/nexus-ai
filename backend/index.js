@@ -2,6 +2,8 @@ import express from 'express';
 import ImageKit from 'imagekit';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import path from 'path';
+import url, { fileURLToPath } from 'url';
 import mongoose from 'mongoose';
 import UserChats from './models/userChats.js';
 import Chat from './models/chat.js';
@@ -13,6 +15,9 @@ dotenv.config();
 
 const port = process.env.PORT || 3000;
 const app = express();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 //middleware
 app.use(express.urlencoded({ extended: true }));
@@ -105,14 +110,14 @@ app.get('/api/userchats', ClerkExpressWithAuth(), async (req, res) => {
     const userId = req.auth.userId;
 
     try {
-        const userChats = await UserChats.find({ userId });
+        const userChats = await UserChats.findOne({ userId });
 
         if (!userChats) {
             return res.status(404).send('No chats found');
         }
 
         // console.log(userChats);
-        res.status(200).send(userChats[0].chats);
+        res.status(200).send(userChats.chats);
 
     } catch (err) {
         console.error(err);
@@ -120,9 +125,74 @@ app.get('/api/userchats', ClerkExpressWithAuth(), async (req, res) => {
     }
 })
 
+app.get('/api/chats/:id', ClerkExpressWithAuth(), async (req, res) => {
+    const userId = req.auth.userId;
+
+
+
+    try {
+        const chat = await Chat.findOne({ _id: req.params.id, userId });
+
+        if (!UserChats) {
+            return res.status(404).send('No chats found');
+        }
+
+        // console.log(userChats);
+        res.status(200).send(chat);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+})
+
+app.put('/api/chats/:id', ClerkExpressWithAuth(), async (req, res) => {
+
+    const userId = req.auth.userId;
+
+    const { question, answer, img } = req.body;
+
+    const newItems = [
+        ...(question
+            ? [{ role: "user", parts: [{ text: question }], ...(img && { img }) }]
+            : []),
+        { role: "model", parts: [{ text: answer }] },
+    ];
+
+
+    try {
+
+        const updatedChat = await Chat.updateOne(
+            { _id: req.params.id, userId },
+            {
+                $push: {
+                    history: {
+                        $each: newItems,
+                    },
+                },
+            }
+        );
+        // console.log(userChats);
+        res.status(200).send(updatedChat);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+
+})
+
+
+
 app.use((err, req, res) => {
     console.error(err.stack);
     res.status(401).send('Something broke!');
+})
+
+app.use(express.static(path.join(__dirname, '../public')));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public', "index.html"));
 })
 
 

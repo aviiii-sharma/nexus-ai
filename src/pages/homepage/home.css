@@ -110,8 +110,9 @@
 
 .orbital {
     position: absolute;
-    bottom: 0;
+    /* bottom: 0; */
     left: 0;
+    height: 130%;
     pointer-events: none;
     opacity: 0.05;
     animation: 100s linear infinite rotateOrbital;
@@ -160,7 +161,7 @@
     }
 
     100% {
-        transform: rotate(20deg);
+        transform: rotate(70deg);
     }
 
 }

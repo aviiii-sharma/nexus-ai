@@ -5,8 +5,10 @@ import { IKImage } from "imagekitio-react";
 import model from '@/lib/gemini';
 import Markdown from 'react-markdown';
 import { Loader } from 'rsuite';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-const NewPrompt = () => {
+
+const NewPrompt = ({ data }) => {
 
     const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");
@@ -20,17 +22,10 @@ const NewPrompt = () => {
     });
     const chat = model.startChat({
         history: [
-            {
-                role: "user",
-                parts: [{
-                    text: "Hello i have a white cat"
-                }],
-            }, {
-                role: "model",
-                parts: [{
-                    text: "Hello, how can I help you today?"
-                }],
-            }
+            data?.history.map(({ role, parts }) => ({
+                role,
+                parts: [{ text: parts[0].text }],
+            })),
         ],
         generationConfig: {
             // maxOutputTokens: 100,
@@ -38,31 +33,71 @@ const NewPrompt = () => {
     })
 
     const endRef = useRef(null);
+    const formRef = useRef(null);
 
     useEffect(() => {
-        endRef.current.scrollIntoView({ behavior: 'smooth' }, [question, answer, img.dbData]);
-
+        endRef.current.scrollIntoView({ behavior: 'smooth' }, [data, question, answer, img.dbData]);
     })
 
-    const add = async (text) => {
+    const queryClient = useQueryClient();
 
-        setQuestion(text);
-        const result = await chat.sendMessageStream(Object.entries(img.dbData).length ? [img.aiData, text] : [text]);
 
-        let accumulatedText = "";
-        for await (const chunk of result.stream) {
-            const chunkText = chunk.text();
-            console.log(chunkText);
-            accumulatedText += chunkText;
-            setAnswer(accumulatedText);
+    const mutation = useMutation({
+        mutationFn: () => {
+            return fetch(`${import.meta.env.VITE_API_URL}/api/chats/${data._id}`, {
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    question: question.length ? question : undefined,
+                    answer: answer,
+                    img: img.dbData?.filePath || undefined,
+
+                })
+            }).then(res => res.json());
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['chat', data._id],
+            }).then(res => res.json());
+            formRef.current.reset();
+            setQuestion("");
+            setAnswer("");
+            setImg({
+                isLoading: false,
+                error: "",
+                dbData: {},
+                aiData: {}
+            });
+        },
+        onError: (error) => {
+            console.log(error);
+        }
+    });
+
+    const add = async (text, isInitial) => {
+
+        if (!isInitial) {
+            setQuestion(text);
+        }
+        try {
+            const result = await chat.sendMessageStream(Object.entries(img.dbData).length ? [img.aiData, text] : [text]);
+
+            let accumulatedText = "";
+            for await (const chunk of result.stream) {
+                const chunkText = chunk.text();
+                console.log(chunkText);
+                accumulatedText += chunkText;
+                setAnswer(accumulatedText);
+            }
+            mutation.mutate();
+        }
+        catch (err) {
+            console.log(err);
         }
 
-        setImg({
-            isLoading: false,
-            error: "",
-            dbData: {},
-            aiData: {}
-        });
     }
 
     const handleSubmit = async (e) => {
@@ -70,11 +105,20 @@ const NewPrompt = () => {
         const text = e.target.text.value;
         if (!text) return;
 
-        add(text);
-
-        
-
+        add(text, false);
     }
+
+    // IN PRODUCTION WE DON'T NEED IT
+    const hasRun = useRef(false);
+    useEffect(() => {
+        if (!hasRun.current) {
+            if (data?.history?.length === 1) {
+                add(data.history[0].parts[0].text, true);
+            }
+        }
+        hasRun.current = true;
+    }, []);
+
     return (
         <>
             {/* Add new Chat */}
@@ -107,7 +151,7 @@ const NewPrompt = () => {
 
 
 
-            <form className='newForm' onSubmit={handleSubmit}>
+            <form className='newForm' onSubmit={handleSubmit} ref={formRef}>
                 <Upload setImg={setImg} />
                 <input id='file' type="file" multiple={false} hidden />
                 <input type="text" placeholder='Type your message here...' name='text' />
