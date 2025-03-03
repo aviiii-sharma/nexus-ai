@@ -3,11 +3,18 @@
 @tailwind utilities;
 
 body {
-  @apply bg-[#121212] text-[#E0E0E0]; /* Dark background and light text */
+  @apply bg-[#121212] text-[#E0E0E0];
+  /* Dark background and light text */
 }
+
 ::-webkit-scrollbar {
   display: none;
 }
+
+* {
+  font-family: 'Arial', sans-serif !important;
+}
+
 
 
 
@@ -62,7 +69,9 @@ body {
 
     --chart-5: 27 87% 67%;
 
-    --radius: 0.5rem}
+    --radius: 0.5rem
+  }
+
   .dark {
 
     --background: 240 10% 3.9%;
@@ -111,7 +120,8 @@ body {
 
     --chart-4: 280 65% 60%;
 
-    --chart-5: 340 75% 55%}
+    --chart-5: 340 75% 55%
+  }
 }
 
 
@@ -120,6 +130,7 @@ body {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
