@@ -130,12 +130,10 @@ app.get('/api/userchats', ClerkExpressWithAuth(), async (req, res) => {
 app.get('/api/chats/:id', ClerkExpressWithAuth(), async (req, res) => {
     const userId = req.auth.userId;
 
-
-
     try {
         const chat = await Chat.findOne({ _id: req.params.id, userId });
 
-        if (!UserChats) {
+        if (!chat) {
             return res.status(404).send('No chats found');
         }
 
@@ -186,12 +184,12 @@ app.put('/api/chats/:id', ClerkExpressWithAuth(), async (req, res) => {
 
 
 
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(401).send('Something broke!');
 })
 
-app.use(express.static(path.join(__dirname, '../public')));
+
 
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../public', "index.html"));
@@ -200,6 +198,9 @@ app.use((req, res, next) => {
     res.setHeader("Content-Security-Policy", "default-src 'self'; font-src 'self' https://ainexus-backend.vercel.app;");
     next();
 });
+
+app.use(express.static(path.join(__dirname, '../public')));
+
 
 
 

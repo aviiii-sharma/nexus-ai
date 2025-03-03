@@ -21,16 +21,15 @@ const NewPrompt = ({ data }) => {
 
     });
     const chat = model.startChat({
-        history: [
-            data?.history.map(({ role, parts }) => ({
-                role,
-                parts: [{ text: parts[0].text }],
-            })),
-        ],
+        history: data?.history?.map(({ role, parts }) => ({
+            role,
+            parts: [{ text: parts[0].text }],
+        })) || [{ role: "user", parts: [{ text: "Hello!" }] }], // Default fallback
         generationConfig: {
             // maxOutputTokens: 100,
         }
-    })
+    });
+
 
     const endRef = useRef(null);
     const formRef = useRef(null);
