@@ -32,7 +32,6 @@ app.use(cors({
 
 const connect = async () => {
     try {
-        console.time("MongoDB Connection Time"); // Start tracking time
         await mongoose.connect(process.env.MONGO, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
