@@ -69,7 +69,7 @@ app.post('/api/chats', ClerkExpressRequireAuth(), async (req, res) => {
         const savedChat = await newChat.save();
 
         // find userChats
-        const userChats = await UserChats.find({ userId });
+        const userChats = await UserChats.find({ userId }).lean();
 
         // if user has no chats, create new one
 
@@ -112,7 +112,7 @@ app.get('/api/userchats', ClerkExpressWithAuth(), async (req, res) => {
     const userId = req.auth.userId;
 
     try {
-        const userChats = await UserChats.findOne({ userId });
+        const userChats = await UserChats.findOne({ userId }).lean();
 
         if (!userChats) {
             return res.status(404).send('No chats found');
@@ -131,7 +131,7 @@ app.get('/api/chats/:id', ClerkExpressWithAuth(), async (req, res) => {
     const userId = req.auth.userId;
 
     try {
-        const chat = await Chat.findOne({ _id: req.params.id, userId });
+        const chat = await Chat.findOne({ _id: req.params.id, userId }).lean();
 
         if (!chat) {
             return res.status(404).send('No chats found');
