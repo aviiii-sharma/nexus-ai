@@ -32,12 +32,18 @@ app.use(cors({
 
 const connect = async () => {
     try {
-        await mongoose.connect(process.env.MONGO)
-        console.log('Connected to MongoDB')
+        console.time("MongoDB Connection Time"); // Start tracking time
+        await mongoose.connect(process.env.MONGO, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.timeEnd("MongoDB Connection Time"); // Log connection time
+        console.log('✅ Connected to MongoDB');
     } catch (err) {
-        console.log(err)
+        console.error('❌ MongoDB Connection Error:', err);
     }
-}
+};
+
 
 
 const imagekit = new ImageKit({
@@ -187,6 +193,7 @@ app.put('/api/chats/:id', ClerkExpressWithAuth(), async (req, res) => {
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(401).send('Something broke!');
+    next();
 })
 
 
