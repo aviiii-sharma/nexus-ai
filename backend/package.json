@@ -1,15 +1,16 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.cjs",
   "scripts": {
-    "start": "nodemon -r dotenv/config index.js",
+    "start": "node index.cjs",
+    "vercel-build": "npm install",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
+  "type": "commonjs",
   "description": "",
   "dependencies": {
     "@clerk/clerk-sdk-node": "^5.1.6",
