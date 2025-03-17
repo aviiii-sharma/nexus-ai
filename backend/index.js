@@ -1,21 +1,21 @@
-const express = require('express');
-const ImageKit = require('imagekit');
-const dotenv = require('dotenv');
-const cors = require('cors');
-const path = require('path');
-const mongoose = require('mongoose');
-const { fileURLToPath } = require('url');
-const UserChats = require('./models/userChats.js');
-const Chat = require('./models/chat.js');
-const { ClerkExpressRequireAuth, ClerkExpressWithAuth } = require('@clerk/clerk-sdk-node');
+import express from 'express';
+import ImageKit from 'imagekit';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import path from 'path';
+import mongoose from 'mongoose';
+import { fileURLToPath } from 'url';
+import UserChats from './models/userChats.js';
+import Chat from './models/chat.js';
+import { ClerkExpressRequireAuth, ClerkExpressWithAuth } from '@clerk/clerk-sdk-node';
 
 dotenv.config();
 
-const app = express();
-
-// Get __dirname in CommonJS
-const __filename = __filename || fileURLToPath(import.meta.url);
+const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const app = express();
+const port = 3000;
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
@@ -152,20 +152,10 @@ app.use((err, req, res, next) => {
     next();
 });
 
-// Serve Static Files
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public', 'index.html'));
+// Start Server
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
 });
-app.use(express.static(path.join(__dirname, '../public')));
 
-// Security Headers
-// app.use((req, res, next) => {
-//     res.setHeader(
-//         'Content-Security-Policy',
-//         "default-src 'self'; font-src 'self' https://ainexus-backend.vercel.app;"
-//     );
-//     next();
-// });
-
-// ✅ Export `app` instead of `app.listen()`
-module.exports = app;
+// Connect to MongoDB
+connect();

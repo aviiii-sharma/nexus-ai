@@ -1,6 +1,8 @@
 
 import mongoose from "mongoose";
 
+// const path = require('path');
+
 const userChatsSchema = new mongoose.Schema({
     userId: {
         type: String,
