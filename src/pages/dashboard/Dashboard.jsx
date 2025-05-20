@@ -43,7 +43,7 @@ const Dashboard = () => {
         <div className='dashboardPage'>
             <div className='texts'>
                 <div className='logo'>
-                    <h1>AI NEXUS</h1>
+                    <h1>NEXUS AI</h1>
                 </div>
                 <div className="options">
                     <div className='option'>

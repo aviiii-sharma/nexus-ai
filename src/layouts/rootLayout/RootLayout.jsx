@@ -27,7 +27,7 @@ const RootLayout = () => {
                 <div className="rootLayout">
                     <header>
                         <Link to="/" className="logo">
-                            <span className='heading'>AI NEXUS</span>
+                            <span className='heading'>NEXUS AI</span>
                         </Link>
                         <div className="user">
                             <SignedIn>
