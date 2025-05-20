@@ -9,7 +9,7 @@ const Homepage = () => {
         <div className='homepage'>
             <img src="/starbg.png" className="orbital" />
             <div className='left'>
-                <h1>NEXUX AI</h1>
+                <h1>NEXUS AI</h1>
                 <h2>Empowering Your Digital Future</h2>
                 <h3>Discover cutting-edge AI solutions that enhance productivity, creativity, and efficiency. Nexus AI is your gateway to intelligent conversations, automation, and innovation. 🚀</h3>
                 <Link to="/dashboard"> Get Started</Link>
