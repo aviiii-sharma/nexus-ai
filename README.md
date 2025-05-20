@@ -22,9 +22,15 @@ An AI chat application built with React and Node.js that uses Clerk for authenti
 
 1. Clone the repository
 2. Install dependencies:
-3. Set up environment variables in `.env` files
-4. Start the backend:
-5. Start the frontend:
+3.     npm install -g nodemon
+4.     npm install --save-dev nodemon
+5. Set up environment variables in `.env` files
+6. Start the backend:
+7.     cd backend
+8.     npm start
+9. Start the frontend:
+       cd ..
+       npm run dev
 
 
 ## Environment Variables
